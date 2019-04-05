@@ -22,8 +22,15 @@ public:
 	void MovePlatform(float DeltaTime);
 
 private:
-	FVector StartingLocation;
+	UPROPERTY(EditAnywhere, Category = "Setup")
+	float Speed = 1.0f;
 
-	UPROPERTY(EditDefaultsOnly, Category = "Setup")
-	int32 PlatformSpeed = 1;
+	UPROPERTY(EditAnywhere, Category = "Setup", Meta = (MakeEditWidget = true))
+	FVector TargetLocation; // Relative Position from object
+
+	UPROPERTY(VisibleAnywhere, Category = "Movement Points")
+	FVector StartLocation;
+
+	UPROPERTY(VisibleAnywhere, Category = "Movement Points")
+	FVector EndLocation;
 };
