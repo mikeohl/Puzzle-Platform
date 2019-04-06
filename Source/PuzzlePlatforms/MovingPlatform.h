@@ -20,6 +20,7 @@ public:
 	virtual void Tick(float DeltaTime) override;
 	
 	void MovePlatform(float DeltaTime);
+	void SetCanMove(bool bActivateMove);
 
 private:
 	UPROPERTY(EditAnywhere, Category = "Setup")
@@ -28,9 +29,15 @@ private:
 	UPROPERTY(EditAnywhere, Category = "Setup", Meta = (MakeEditWidget = true))
 	FVector TargetLocation; // Relative Position from object
 
-	UPROPERTY(VisibleAnywhere, Category = "Movement Points")
+	UPROPERTY(EditAnywhere, Category = "Movement")
+	bool bCanMove = true;
+
+	UPROPERTY(VisibleAnywhere, Category = "Movement")
+	int32 Count = 0;
+
+	UPROPERTY(VisibleAnywhere, Category = "Movement Coordinates")
 	FVector StartLocation;
 
-	UPROPERTY(VisibleAnywhere, Category = "Movement Points")
+	UPROPERTY(VisibleAnywhere, Category = "Movement Coordinates")
 	FVector EndLocation;
 };
