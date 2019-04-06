@@ -60,6 +60,8 @@ void AMovingPlatform::MovePlatform(float DeltaTime)
 // Set whether platform can move
 void AMovingPlatform::SetCanMove(bool bMove)
 {
+	// TODO: Clean up this logic
+
 	bMove ? Count++ : Count--;
 	if (Count < 0) Count = 0;
 	Count ? bCanMove = true : bCanMove = false;
