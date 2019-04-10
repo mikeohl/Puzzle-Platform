@@ -4,6 +4,7 @@
 #include "PuzzlePlatformsGameInstance.h"
 
 #include "PlatformTrigger.h"
+#include "MenuSystem/MainMenu.h"
 
 #include "Engine/Engine.h"
 #include "GameFramework/PlayerController.h"
@@ -33,10 +34,11 @@ void UPuzzlePlatformsGameInstance::Init()
 void UPuzzlePlatformsGameInstance::LoadMenu()
 {
 	if (!ensure(MenuClass)) { return; }
-	UUserWidget* Menu = CreateWidget<UUserWidget>(this, MenuClass);
+	UMainMenu* Menu = CreateWidget<UMainMenu>(this, MenuClass);
 
 	if (!ensure(Menu)) { return; }
 	Menu->AddToViewport();
+	Menu->SetMenuInterface(this);
 
 	APlayerController* PlayerController = GetFirstLocalPlayerController();
 	if (!ensure(PlayerController)) { return; }
@@ -60,6 +62,7 @@ void UPuzzlePlatformsGameInstance::Host()
 	if (!ensure(World)) { return; }
 
 	World->ServerTravel("/Game/ThirdPersonBP/Maps/ThirdPersonExampleMap?listen");
+	ResetInputMode();
 }
 
 // Join a server and goto playable map - (Exec UFUNCTION)
@@ -73,6 +76,17 @@ void UPuzzlePlatformsGameInstance::Join(const FString& Address)
 	if (!ensure(PlayerController)) { return; }
 
 	PlayerController->ClientTravel(*Address, TRAVEL_Absolute);
+}
+
+// Reset player controller input to default
+void UPuzzlePlatformsGameInstance::ResetInputMode()
+{
+	APlayerController* PlayerController = GetFirstLocalPlayerController();
+	if (!ensure(PlayerController)) { return; }
+
+	FInputModeGameOnly InputModeBaseData;
+	PlayerController->bShowMouseCursor = false;
+	PlayerController->SetInputMode(InputModeBaseData);
 }
 
 
