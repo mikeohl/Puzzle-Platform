@@ -10,13 +10,14 @@ bool UMainMenu::Initialize()
 	bool bSucceeded = Super::Initialize();
 	if (!bSucceeded) { return false; }
 
-	// TODO: Setup
-
 	if (!ensure(HostButton)) { return false; }
 	HostButton->OnClicked.AddDynamic(this, &UMainMenu::HostServer);
 
 	//if (!ensure(JoinButton)) { return false; }
 	//JoinButton->OnClicked.AddDynamic(this, &UMainMenu::JoinServer);
+
+	AddToViewport();
+	
 	return true;
 }
 
@@ -25,12 +26,13 @@ void UMainMenu::HostServer()
 {
 	if (!ensure(MenuInterface)) { return; }
 	MenuInterface->Host();
+	RemoveFromViewport();
 }
 
 
 void UMainMenu::JoinServer(FString Address)
 {
-
+	RemoveFromViewport();
 }
 
 

@@ -34,22 +34,14 @@ void UPuzzlePlatformsGameInstance::Init()
 void UPuzzlePlatformsGameInstance::LoadMenu()
 {
 	if (!ensure(MenuClass)) { return; }
-	UMainMenu* Menu = CreateWidget<UMainMenu>(this, MenuClass);
+	Menu = CreateWidget<UMainMenu>(this, MenuClass);
 
 	if (!ensure(Menu)) { return; }
-	Menu->AddToViewport();
 	Menu->SetMenuInterface(this);
 
-	APlayerController* PlayerController = GetFirstLocalPlayerController();
-	if (!ensure(PlayerController)) { return; }
-
-	FInputModeUIOnly InputModeBaseData;
-	InputModeBaseData.SetLockMouseToViewportBehavior(EMouseLockMode::DoNotLock);
-	InputModeBaseData.SetWidgetToFocus(Menu->TakeWidget());
-	
-	PlayerController->bShowMouseCursor = true;
-	PlayerController->SetInputMode(InputModeBaseData);
+	SetInputToMenu();
 }
+
 
 // Host a server and goto playable map - (Exec UFUNCTION)
 void UPuzzlePlatformsGameInstance::Host()
@@ -62,7 +54,7 @@ void UPuzzlePlatformsGameInstance::Host()
 	if (!ensure(World)) { return; }
 
 	World->ServerTravel("/Game/ThirdPersonBP/Maps/ThirdPersonExampleMap?listen");
-	ResetInputMode();
+	SetInputToGame();
 }
 
 // Join a server and goto playable map - (Exec UFUNCTION)
@@ -76,10 +68,11 @@ void UPuzzlePlatformsGameInstance::Join(const FString& Address)
 	if (!ensure(PlayerController)) { return; }
 
 	PlayerController->ClientTravel(*Address, TRAVEL_Absolute);
+	SetInputToGame();
 }
 
-// Reset player controller input to default
-void UPuzzlePlatformsGameInstance::ResetInputMode()
+// Set player controller input to default GameOnly
+void UPuzzlePlatformsGameInstance::SetInputToGame()
 {
 	APlayerController* PlayerController = GetFirstLocalPlayerController();
 	if (!ensure(PlayerController)) { return; }
@@ -89,10 +82,28 @@ void UPuzzlePlatformsGameInstance::ResetInputMode()
 	PlayerController->SetInputMode(InputModeBaseData);
 }
 
+// Reset player controller input to UIOnly with cursor for menu
+void UPuzzlePlatformsGameInstance::SetInputToMenu()
+{
+	APlayerController* PlayerController = GetFirstLocalPlayerController();
+	if (!ensure(PlayerController)) { return; }
+
+	FInputModeUIOnly InputModeBaseData;
+	InputModeBaseData.SetLockMouseToViewportBehavior(EMouseLockMode::DoNotLock);
+	PlayerController->bShowMouseCursor = true;
+	PlayerController->SetInputMode(InputModeBaseData);
+}
+
+
+
+
 
 /**
- * Logging and Test code used to debug
+ * Logging and Test code used to debug + Legacy code
  * 
  * UE_LOG(LogTemp, Warning, TEXT("UPuzzlePlatformsGameInstance Constructor Called"));
  * UE_LOG(LogTemp, Warning, TEXT("UPuzzlePlatformsGameInstance Init Called"));
+ *
+ * +++++++++++ Legacy Code +++++++++++++
+ * InputModeBaseData.SetWidgetToFocus(Menu->TakeWidget());
  */

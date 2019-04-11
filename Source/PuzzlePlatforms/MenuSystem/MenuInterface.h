@@ -22,7 +22,11 @@ class PUZZLEPLATFORMS_API IMenuInterface
 
 	// Add interface functions to this class. This is the class that will be inherited to implement this interface.
 public:
+	virtual void LoadMenu() = 0;
 	virtual void Host() = 0;
 	virtual void Join(const FString& Address) = 0;
 
+protected:
+	TSubclassOf<class UUserWidget> MenuClass = nullptr;
+	class UMainMenu* Menu = nullptr;
 };
