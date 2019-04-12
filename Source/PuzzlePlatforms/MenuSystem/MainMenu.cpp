@@ -61,7 +61,6 @@ void UMainMenu::OpenSelectMenu()
 }
 
 
-
 /**
  * Logging and Test code used to debug + Legacy code
  *

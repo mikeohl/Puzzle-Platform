@@ -5,6 +5,7 @@
 
 #include "PlatformTrigger.h"
 #include "MenuSystem/MainMenu.h"
+#include "MenuSystem/InGameMenu.h"
 
 #include "Engine/Engine.h"
 #include "GameFramework/PlayerController.h"
@@ -19,25 +20,46 @@ UPuzzlePlatformsGameInstance::UPuzzlePlatformsGameInstance(const FObjectInitiali
 	
 	if (MainMenu_WBPClass.Succeeded())
 	{
-		MenuClass = MainMenu_WBPClass.Class;
+		MainMenuClass = MainMenu_WBPClass.Class;
+	}
+
+	ConstructorHelpers::FClassFinder<UUserWidget> InGameMenu_WBPClass(TEXT("/Game/MenuSystem/InGameMenu_WBP"));
+
+	if (InGameMenu_WBPClass.Succeeded())
+	{
+		InGameMenuClass = InGameMenu_WBPClass.Class;
 	}
 }
 
 // Set values to initialize
 void UPuzzlePlatformsGameInstance::Init()
 {
-	if (!ensure(MenuClass)) { return; }
-	UE_LOG(LogTemp, Warning, TEXT("Found class %s"), *MenuClass->GetName());
+	if (!ensure(MainMenuClass)) { return; }
+	UE_LOG(LogTemp, Warning, TEXT("Found class %s"), *MainMenuClass->GetName());
+
+	if (!ensure(InGameMenuClass)) { return; }
+	UE_LOG(LogTemp, Warning, TEXT("Found class %s"), *InGameMenuClass->GetName());
 }
 
 // Loads User Menu Widget - (Exec UFUNCTION)
 void UPuzzlePlatformsGameInstance::LoadMenu()
 {
-	if (!ensure(MenuClass)) { return; }
-	Menu = CreateWidget<UMainMenu>(this, MenuClass);
+	if (!ensure(MainMenuClass)) { return; }
+	MainMenu = CreateWidget<UMainMenu>(this, MainMenuClass);
 
-	if (!ensure(Menu)) { return; }
-	Menu->SetMenuInterface(this);
+	if (!ensure(MainMenu)) { return; }
+	MainMenu->SetMenuInterface(this);
+
+	SetInputToMenu();
+}
+
+void UPuzzlePlatformsGameInstance::LoadInGameMenu()
+{
+	if (!ensure(InGameMenuClass)) { return; }
+	InGameMenu = CreateWidget<UInGameMenu>(this, InGameMenuClass);
+
+	if (!ensure(InGameMenu)) { return; }
+	InGameMenu->SetMenuInterface(this);
 
 	SetInputToMenu();
 }
@@ -69,6 +91,7 @@ void UPuzzlePlatformsGameInstance::Join(const FString& Address)
 
 	PlayerController->ClientTravel(*Address, TRAVEL_Absolute);
 	SetInputToGame();
+	
 }
 
 // Set player controller input to default GameOnly
@@ -80,6 +103,8 @@ void UPuzzlePlatformsGameInstance::SetInputToGame()
 	FInputModeGameOnly InputModeBaseData;
 	PlayerController->bShowMouseCursor = false;
 	PlayerController->SetInputMode(InputModeBaseData);
+
+	PlayerController->InputComponent->BindAction("LoadInGameMenu", EInputEvent::IE_Pressed, this, &UPuzzlePlatformsGameInstance::LoadInGameMenu);
 }
 
 // Reset player controller input to UIOnly with cursor for menu
@@ -103,6 +128,8 @@ void UPuzzlePlatformsGameInstance::SetInputToMenu()
  * 
  * UE_LOG(LogTemp, Warning, TEXT("UPuzzlePlatformsGameInstance Constructor Called"));
  * UE_LOG(LogTemp, Warning, TEXT("UPuzzlePlatformsGameInstance Init Called"));
+ *
+ * UE_LOG(LogTemp, Warning, TEXT("LoadInGameMenu Completed"));
  *
  * +++++++++++ Legacy Code +++++++++++++
  * InputModeBaseData.SetWidgetToFocus(Menu->TakeWidget());

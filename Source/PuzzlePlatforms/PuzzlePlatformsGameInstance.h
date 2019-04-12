@@ -23,6 +23,9 @@ public:
 	UFUNCTION(Exec, BlueprintCallable)
 	virtual void LoadMenu() override;
 
+	UFUNCTION(Exec, BlueprintCallable)
+	virtual void LoadInGameMenu() override;
+
 	UFUNCTION(Exec)
 	virtual void Host() override;
 

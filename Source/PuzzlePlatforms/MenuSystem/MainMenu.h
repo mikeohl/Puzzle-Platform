@@ -39,6 +39,8 @@ private:
 	UFUNCTION()
 	void OpenSelectMenu();
 
+
+
 	UPROPERTY(meta = (BindWidget))
 	UButton* JoinButton = nullptr;
 
