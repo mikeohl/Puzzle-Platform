@@ -3,7 +3,10 @@
 
 #include "MainMenu.h"
 
+#include "UMG/Public/Components/Widget.h"
 #include "UMG/Public/Components/Button.h"
+#include "UMG/Public/Components/WidgetSwitcher.h"
+#include "UMG/Public/Components/EditableTextBox.h"
 
 bool UMainMenu::Initialize()
 {
@@ -13,8 +16,14 @@ bool UMainMenu::Initialize()
 	if (!ensure(HostButton)) { return false; }
 	HostButton->OnClicked.AddDynamic(this, &UMainMenu::HostServer);
 
-	//if (!ensure(JoinButton)) { return false; }
-	//JoinButton->OnClicked.AddDynamic(this, &UMainMenu::JoinServer);
+	if (!ensure(JoinButton)) { return false; }
+	JoinButton->OnClicked.AddDynamic(this, &UMainMenu::OpenJoinMenu);
+
+	if (!ensure(CancelButton)) { return false; }
+	CancelButton->OnClicked.AddDynamic(this, &UMainMenu::OpenSelectMenu);
+
+	if (!ensure(JoinServerButton)) { return false; }
+	JoinServerButton->OnClicked.AddDynamic(this, &UMainMenu::JoinServer);
 
 	AddToViewport();
 	
@@ -30,9 +39,25 @@ void UMainMenu::HostServer()
 }
 
 
-void UMainMenu::JoinServer(FString Address)
+void UMainMenu::JoinServer()
 {
+	if (!ensure(IPInputBox)) { return; }
+	MenuInterface->Join(IPInputBox->GetText().ToString());
 	RemoveFromViewport();
+}
+
+
+void UMainMenu::OpenJoinMenu()
+{
+	if (!ensure(WidgetSwitcher && JoinMenu)) { return; }
+	WidgetSwitcher->SetActiveWidget(JoinMenu);
+}
+
+
+void UMainMenu::OpenSelectMenu()
+{
+	if (!ensure(WidgetSwitcher && SelectMenu)) { return; }
+	WidgetSwitcher->SetActiveWidget(SelectMenu);
 }
 
 
