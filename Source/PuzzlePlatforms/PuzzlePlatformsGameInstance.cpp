@@ -41,7 +41,7 @@ void UPuzzlePlatformsGameInstance::Init()
 	UE_LOG(LogTemp, Warning, TEXT("Found class %s"), *InGameMenuClass->GetName());
 }
 
-// Loads User Menu Widget - (Exec UFUNCTION)
+// Loads User Menu Widget (called in Blueprint by BeginPlay)
 void UPuzzlePlatformsGameInstance::LoadMenu()
 {
 	if (!ensure(MainMenuClass)) { return; }
@@ -53,6 +53,7 @@ void UPuzzlePlatformsGameInstance::LoadMenu()
 	SetInputToMenu();
 }
 
+// Load up and set input to the InGame Menu
 void UPuzzlePlatformsGameInstance::LoadInGameMenu()
 {
 	if (!ensure(InGameMenuClass)) { return; }
@@ -65,13 +66,9 @@ void UPuzzlePlatformsGameInstance::LoadInGameMenu()
 }
 
 
-// Host a server and goto playable map - (Exec UFUNCTION)
+// Host a server and goto playable map
 void UPuzzlePlatformsGameInstance::Host()
 {
-	// Or use GetEngine function on GameInstance
-	if (!ensure(GEngine)) { return; } 
-	GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Red, TEXT("Hello World"));
-
 	UWorld* World = GetWorld();
 	if (!ensure(World)) { return; }
 
@@ -79,20 +76,35 @@ void UPuzzlePlatformsGameInstance::Host()
 	SetInputToGame();
 }
 
-// Join a server and goto playable map - (Exec UFUNCTION)
+// Join a server and goto playable map
 void UPuzzlePlatformsGameInstance::Join(const FString& Address)
 {
-	// Or use GetEngine function on GameInstance
-	if (!ensure(GEngine)) { return; }
-	GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Red, FString::Printf(TEXT("Joining: %s"), *Address));
-
 	APlayerController* PlayerController = GetFirstLocalPlayerController();
 	if (!ensure(PlayerController)) { return; }
 
 	PlayerController->ClientTravel(*Address, TRAVEL_Absolute);
 	SetInputToGame();
-	
 }
+
+// Leave the server (whether client or host) //TODO: More robust implementation for server to not abandon clients
+void UPuzzlePlatformsGameInstance::Leave()
+{
+	APlayerController* PlayerController = GetFirstLocalPlayerController();
+	if (!ensure(PlayerController)) { return; }
+
+	PlayerController->ClientTravel("/Game/MenuSystem/MainMenu", TRAVEL_Absolute);
+}
+
+// Quit the game
+void UPuzzlePlatformsGameInstance::QuitGame()
+{
+	APlayerController* PlayerController = GetFirstLocalPlayerController();
+	if (!ensure(PlayerController)) { return; }
+
+	PlayerController->ConsoleCommand("Quit");
+	UE_LOG(LogTemp, Warning, TEXT("Quit Game Called"));
+}
+
 
 // Set player controller input to default GameOnly
 void UPuzzlePlatformsGameInstance::SetInputToGame()
@@ -103,8 +115,6 @@ void UPuzzlePlatformsGameInstance::SetInputToGame()
 	FInputModeGameOnly InputModeBaseData;
 	PlayerController->bShowMouseCursor = false;
 	PlayerController->SetInputMode(InputModeBaseData);
-
-	PlayerController->InputComponent->BindAction("LoadInGameMenu", EInputEvent::IE_Pressed, this, &UPuzzlePlatformsGameInstance::LoadInGameMenu);
 }
 
 // Reset player controller input to UIOnly with cursor for menu
@@ -122,7 +132,6 @@ void UPuzzlePlatformsGameInstance::SetInputToMenu()
 
 
 
-
 /**
  * Logging and Test code used to debug + Legacy code
  * 
@@ -130,7 +139,12 @@ void UPuzzlePlatformsGameInstance::SetInputToMenu()
  * UE_LOG(LogTemp, Warning, TEXT("UPuzzlePlatformsGameInstance Init Called"));
  *
  * UE_LOG(LogTemp, Warning, TEXT("LoadInGameMenu Completed"));
+
+ * Or use GetEngine function on GameInstance
+ * if (!ensure(GEngine)) { return; }
+ * GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Red, FString::Printf(TEXT("Joining: %s"), *Address));
  *
  * +++++++++++ Legacy Code +++++++++++++
  * InputModeBaseData.SetWidgetToFocus(Menu->TakeWidget());
+ * PlayerController->InputComponent->BindAction("LoadInGameMenu", EInputEvent::IE_Pressed, this, &UPuzzlePlatformsGameInstance::LoadInGameMenu);
  */

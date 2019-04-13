@@ -26,6 +26,9 @@ public:
 	UFUNCTION(Exec, BlueprintCallable)
 	virtual void LoadInGameMenu() override;
 
+	virtual void Leave() override;
+	virtual void QuitGame() override;
+
 	UFUNCTION(Exec)
 	virtual void Host() override;
 
@@ -33,6 +36,6 @@ public:
 	virtual void Join(const FString& Address) override;
 
 private:
-	void SetInputToGame();
-	void SetInputToMenu();
+	virtual void SetInputToGame() override;
+	virtual void SetInputToMenu() override;
 };

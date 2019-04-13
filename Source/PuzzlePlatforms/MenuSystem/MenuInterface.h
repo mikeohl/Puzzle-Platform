@@ -6,6 +6,8 @@
 #include "UObject/Interface.h"
 #include "MenuInterface.generated.h"
 
+class UUserWidget;
+
 // This class does not need to be modified.
 UINTERFACE(MinimalAPI)
 class UMenuInterface : public UInterface
@@ -25,12 +27,17 @@ public:
 	virtual void LoadMenu() = 0;
 	virtual void LoadInGameMenu() = 0;
 
+	virtual void SetInputToGame() = 0;
+	virtual void SetInputToMenu() = 0;
+
 	virtual void Host() = 0;
 	virtual void Join(const FString& Address) = 0;
+	virtual void Leave() = 0;
+	virtual void QuitGame() = 0;
 
 protected:
-	TSubclassOf<class UUserWidget> MainMenuClass = nullptr;
-	TSubclassOf<class UUserWidget> InGameMenuClass = nullptr;
+	TSubclassOf<UUserWidget> MainMenuClass = nullptr;
+	TSubclassOf<UUserWidget> InGameMenuClass = nullptr;
 	
 	class UInGameMenu* InGameMenu = nullptr;
 	class UMainMenu* MainMenu = nullptr;

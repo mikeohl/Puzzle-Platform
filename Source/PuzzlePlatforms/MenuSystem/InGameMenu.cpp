@@ -26,11 +26,28 @@ bool UInGameMenu::Initialize()
 
 void UInGameMenu::LoadMainMenu()
 {
-	UE_LOG(LogTemp, Warning, TEXT("Called LoadMainMen()"));
+	RemoveFromViewport();
+
+	if (!ensure(MenuInterface)) { return; }
+	MenuInterface->Leave();
 }
 
 
 void UInGameMenu::CloseInGameMenu()
 {
-	UE_LOG(LogTemp, Warning, TEXT("Called CloseInGameMenu()"));
+	RemoveFromViewport();
+
+	if (!ensure(MenuInterface)) { return; }
+	MenuInterface->SetInputToGame();
 }
+
+
+/**
+ * Logging and Test code used to debug + Legacy code
+ *
+ * UE_LOG(LogTemp, Warning, TEXT("Called LoadMainMen()"));
+ * UE_LOG(LogTemp, Warning, TEXT("Called CloseInGameMenu()"));
+ *
+ * ++++++++++++++++ LEGACY CODE +++++++++++++++++++
+ * 
+ */
