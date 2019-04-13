@@ -39,7 +39,8 @@ private:
 	UFUNCTION()
 	void OpenSelectMenu();
 
-
+	UFUNCTION()
+	void QuitGame();
 
 	UPROPERTY(meta = (BindWidget))
 	UButton* JoinButton = nullptr;
@@ -52,6 +53,9 @@ private:
 
 	UPROPERTY(meta = (BindWidget))
 	UButton* JoinServerButton = nullptr;
+
+	UPROPERTY(meta = (BindWidget))
+	UButton* QuitGameButton = nullptr;
 
 	UPROPERTY(meta = (BindWidget))
 	UWidgetSwitcher* WidgetSwitcher = nullptr;

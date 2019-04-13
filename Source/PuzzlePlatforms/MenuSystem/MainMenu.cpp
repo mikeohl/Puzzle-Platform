@@ -25,6 +25,9 @@ bool UMainMenu::Initialize()
 	if (!ensure(JoinServerButton)) { return false; }
 	JoinServerButton->OnClicked.AddDynamic(this, &UMainMenu::JoinServer);
 
+	if (!ensure(QuitGameButton)) { return false; }
+	QuitGameButton->OnClicked.AddDynamic(this, &UMainMenu::QuitGame);
+	
 	AddToViewport();
 	
 	return true;
@@ -58,6 +61,12 @@ void UMainMenu::OpenSelectMenu()
 {
 	if (!ensure(WidgetSwitcher && SelectMenu)) { return; }
 	WidgetSwitcher->SetActiveWidget(SelectMenu);
+}
+
+void UMainMenu::QuitGame()
+{
+	if (!ensure(MenuInterface)) { return; }
+	MenuInterface->QuitGame();
 }
 
 
