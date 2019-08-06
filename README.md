@@ -10,7 +10,7 @@ A Multiplayer Plaformer - Players work together to activate pads that move platf
 * Host and Join from the console
 * Simple prototype layout
 
-Alt-H1
+###
 
 **Instructions for Puzzle Platforms Co-op Prototype**
 
